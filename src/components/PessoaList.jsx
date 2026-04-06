@@ -17,9 +17,9 @@ function PessoaList({ pessoas, onEditar, onDeletar }) {
                     <tr>
                         <th style={styles.th}>ID</th>
                         <th style={styles.th}>Nome</th>
-                        <th style={styles.th}>Descrição</th>
-                        <th style={styles.th}>Preço</th>
-                        <th style={styles.th}>Qtd</th>
+                        <th style={styles.th}>Email</th>
+                        <th style={styles.th}>Telefone</th>
+                        <th style={styles.th}>Endereço</th>
                         <th style={styles.th}>Ações</th>
                     </tr>
                 </thead>
@@ -28,9 +28,9 @@ function PessoaList({ pessoas, onEditar, onDeletar }) {
                         <tr key={pessoa.id}>
                             <td style={styles.td}>{pessoa.id}</td>
                             <td style={styles.td}>{pessoa.nome}</td>
-                            <td style={styles.td}>{pessoa.descricao || '-'}</td>
-                            <td style={styles.td}>R$ {pessoa.preco.toFixed(2)}</td>
-                            <td style={styles.td}>{pessoa.quantidade}</td>
+                            <td style={styles.td}>{pessoa.email || '-'}</td>
+                            <td style={styles.td}>{pessoa.telefone}</td>
+                            <td style={styles.td}>{pessoa.endereco}</td>
                             <td style={styles.td}>
                                 <button
                                     onClick={() => onEditar(pessoa)}

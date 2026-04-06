@@ -28,7 +28,7 @@ export const criarPessoa = async (pessoa) => {
 };
 
 export const atualizarPessoa = async (pessoa) => {
-    const response = await api.put('/', pessoa);
+    const response = await api.put(`/${pessoa.id}`, pessoa);
     return response.data;
 };
 

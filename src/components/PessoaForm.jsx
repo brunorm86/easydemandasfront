@@ -3,17 +3,17 @@ import { useState, useEffect } from 'react';
 
 function PessoaForm({ pessoaEditando, onSalvar, onCancelar }) {
   const [nome, setNome] = useState('');
-  const [descricao, setDescricao] = useState('');
-  const [preco, setPreco] = useState('');
-  const [quantidade, setQuantidade] = useState('');
+  const [email, setEmail] = useState('');
+  const [telefone, setTelefone] = useState('');
+  const [endereco, setEndereco] = useState('');
 
   // Quando receber um produto para editar, preenche o formulário
   useEffect(() => {
     if (pessoaEditando) {
       setNome(pessoaEditando.nome || '');
-      setDescricao(pessoaEditando.descricao || '');
-      setPreco(pessoaEditando.preco || '');
-      setQuantidade(pessoaEditando.quantidade || '');
+      setEmail(pessoaEditando.email || '');
+      setTelefone(pessoaEditando.telefone || '');
+      setEndereco(pessoaEditando.endereco || '');
     } else {
       limparFormulario();
     }
@@ -21,9 +21,9 @@ function PessoaForm({ pessoaEditando, onSalvar, onCancelar }) {
 
   const limparFormulario = () => {
     setNome('');
-    setDescricao('');
-    setPreco('');
-    setQuantidade('');
+    setEmail('');
+    setTelefone('');
+    setEndereco('');
   };
 
   const handleSubmit = (e) => {
@@ -31,9 +31,9 @@ function PessoaForm({ pessoaEditando, onSalvar, onCancelar }) {
 
     const pessoa = {
       nome,
-      descricao,
-      preco: parseFloat(preco),
-      quantidade: parseInt(quantidade),
+      email,
+      telefone,
+      endereco,
     };
 
     // Se estiver editando, inclui o ID no objeto
@@ -61,34 +61,33 @@ function PessoaForm({ pessoaEditando, onSalvar, onCancelar }) {
           />
         </div>
         <div style={styles.campo}>
-          <label htmlFor="descricao">Descrição:</label>
+          <label htmlFor="email">Email:</label>
           <input
-            id="descricao"
+            id="email"
             type="text"
-            value={descricao}
-            onChange={(e) => setDescricao(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             style={styles.input}
           />
         </div>
         <div style={styles.campo}>
-          <label htmlFor="preco">Preço:</label>
+          <label htmlFor="telefone">Telefone:</label>
           <input
-            id="preco"
-            type="number"
-            step="0.01"
-            value={preco}
-            onChange={(e) => setPreco(e.target.value)}
+            id="telefone"
+            type="text"
+            value={telefone}
+            onChange={(e) => setTelefone(e.target.value)}
             required
             style={styles.input}
           />
         </div>
         <div style={styles.campo}>
-          <label htmlFor="quantidade">Quantidade:</label>
+          <label htmlFor="endereco">Endereço:</label>
           <input
-            id="quantidade"
-            type="number"
-            value={quantidade}
-            onChange={(e) => setQuantidade(e.target.value)}
+            id="endereco"
+            type="text"
+            value={endereco}
+            onChange={(e) => setEndereco(e.target.value)}
             required
             style={styles.input}
           />
