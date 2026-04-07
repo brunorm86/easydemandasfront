@@ -3,25 +3,23 @@ import { useState, useEffect } from 'react';
 
 function PessoaForm({ pessoaEditando, onSalvar, onCancelar }) {
   const [nome, setNome] = useState('');
-  const [sobreNome, setSobreNome] = useState('');
+  const [sobrenome, setSobrenome] = useState('');
   const [email, setEmail] = useState('');
   const [telefone, setTelefone] = useState('');
   const [endereco, setEndereco] = useState('');
   const [cpf, setCpf] = useState('');
   const [dataNascimento, setDataNascimento] = useState('');
-  const [numDependentes, setNumDependentes] = useState('');
 
   // Quando receber um produto para editar, preenche o formulário
   useEffect(() => {
     if (pessoaEditando) {
       setNome(pessoaEditando.nome || '');
-      setSobreNome(pessoaEditando.sobreNome || '');
+      setSobrenome(pessoaEditando.sobrenome || '');
       setEmail(pessoaEditando.email || '');
       setTelefone(pessoaEditando.telefone || '');
       setEndereco(pessoaEditando.endereco || '');
       setCpf(pessoaEditando.cpf || '');
       setDataNascimento(pessoaEditando.dataNascimento || '');
-      setNumDependentes(pessoaEditando.numDependentes || '');
     } else {
       limparFormulario();
     }
@@ -29,13 +27,12 @@ function PessoaForm({ pessoaEditando, onSalvar, onCancelar }) {
 
   const limparFormulario = () => {
     setNome('');
-    setSobreNome('');
+    setSobrenome('');
     setEmail('');
     setTelefone('');
     setEndereco('');
     setCpf('');
     setDataNascimento('');
-    setNumDependentes('');
   };
 
   const handleSubmit = (e) => {
@@ -43,13 +40,12 @@ function PessoaForm({ pessoaEditando, onSalvar, onCancelar }) {
 
     const pessoa = {
       nome,
-      sobreNome,
+      sobrenome,
       email,
       telefone,
       endereco,
       cpf,
       dataNascimento,
-      numDependentes,
     };
 
     // Se estiver editando, inclui o ID no objeto
@@ -77,12 +73,12 @@ function PessoaForm({ pessoaEditando, onSalvar, onCancelar }) {
           />
         </div>
         <div style={styles.campo}>
-          <label htmlFor="sobreNome">Sobre Nome:</label>
+          <label htmlFor="sobrenome">Sobrenome:</label>
           <input
-            id="sobreNome"
+            id="sobrenome"
             type="text"
-            value={sobreNome}
-            onChange={(e) => setSobreNome(e.target.value)}
+            value={sobrenome}
+            onChange={(e) => setSobrenome(e.target.value)}
             required
             style={styles.input}
           />
@@ -137,17 +133,6 @@ function PessoaForm({ pessoaEditando, onSalvar, onCancelar }) {
             type="text"
             value={dataNascimento}
             onChange={(e) => setDataNascimento(e.target.value)}
-            required
-            style={styles.input}
-          />
-        </div>
-        <div style={styles.campo}>
-          <label htmlFor="numDependentes">Número de Dependentes:</label>
-          <input
-            id="numDependentes"
-            type="text"
-            value={numDependentes}
-            onChange={(e) => setNumDependentes(e.target.value)}
             required
             style={styles.input}
           />

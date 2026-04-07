@@ -23,7 +23,6 @@ function PessoaList({ pessoas, onEditar, onDeletar }) {
                         <th style={styles.th}>Endereço</th>
                         <th style={styles.th}>CPF</th>
                         <th style={styles.th}>Data de Nascimento</th>
-                        <th style={styles.th}>Número de Dependentes</th>
                         <th style={styles.th}>Ações</th>
                     </tr>
                 </thead>
@@ -32,13 +31,12 @@ function PessoaList({ pessoas, onEditar, onDeletar }) {
                         <tr key={pessoa.id}>
                             <td style={styles.td}>{pessoa.id}</td>
                             <td style={styles.td}>{pessoa.nome}</td>
-                            <td style={styles.td}>{pessoa.sobreNome}</td>
+                            <td style={styles.td}>{pessoa.sobrenome}</td>
                             <td style={styles.td}>{pessoa.email || '-'}</td>
                             <td style={styles.td}>{pessoa.telefone}</td>
                             <td style={styles.td}>{pessoa.endereco}</td>
                             <td style={styles.td}>{pessoa.cpf}</td>
                             <td style={styles.td}>{pessoa.dataNascimento}</td>
-                            <td style={styles.td}>{pessoa.numDependentes}</td>
                             <td style={styles.td}>
                                 <button
                                     onClick={() => onEditar(pessoa)}
