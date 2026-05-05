@@ -17,6 +17,7 @@ const EmpregadoList = ({ empregados, onEditar, onDeletar }) => {
               <tr>
                 <th>Nome</th>
                 <th>Cargo</th>
+                <th>Departamento</th>
                 <th>Data Contratação</th>
                 <th>E-mail</th>
                 <th>Ações</th>
@@ -25,10 +26,11 @@ const EmpregadoList = ({ empregados, onEditar, onDeletar }) => {
             <tbody>
               {empregados.map((empregado) => (
                 <tr key={empregado.id}>
-                  <td>{empregado.nome} {empregado.sobrenome}</td>
-                  <td>{empregado.cargo}</td>
+                  <td>{empregado.pessoa?.nome} {empregado.pessoa?.sobrenome}</td>
+                  <td>{empregado.cargo?.nome || 'N/A'}</td>
+                  <td>{empregado.departamento?.nome || 'N/A'}</td>
                   <td>{empregado.dataContratacao}</td>
-                  <td>{empregado.email}</td>
+                  <td>{empregado.pessoa?.email}</td>
                   <td>
                     <div className="flex gap-2">
                       <button
