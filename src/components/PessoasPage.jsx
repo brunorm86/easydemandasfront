@@ -9,7 +9,6 @@ const PessoasPage = () => {
   const [pessoaEditando, setPessoaEditando] = useState(null);
   const [erro, setErro] = useState('');
 
-
   const carregarPessoas = async () => {
     try {
       const data = await getPessoas();

@@ -26,7 +26,7 @@ const DepartamentoList = ({ departamentos, onEditar, onDeletar }) => {
                 <tr key={dept.id}>
                   <td>{dept.nome}</td>
                   <td>{dept.sigla || '-'}</td>
-                  <td>{dept.responsavel ? `${dept.responsavel.nome} ${dept.responsavel.sobrenome}` : 'Sem responsável'}</td>
+                  <td>{dept.responsavel?.pessoa ? `${dept.responsavel.pessoa.nome} ${dept.responsavel.pessoa.sobrenome}` : 'Sem responsável'}</td>
                   <td>
                     <div className="flex gap-2">
                       <button

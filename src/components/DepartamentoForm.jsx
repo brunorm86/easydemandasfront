@@ -71,7 +71,7 @@ const DepartamentoForm = ({ departamentoEditando, onSalvar, onCancelar }) => {
               <option value="" disabled>Selecione um empregado...</option>
               {empregados.map((emp) => (
                 <option key={emp.id} value={emp.id}>
-                  {emp.nome} {emp.sobrenome} - {emp.cargo}
+                  {emp.pessoa?.nome} {emp.pessoa?.sobrenome} - {emp.cargo?.nome}
                 </option>
               ))}
             </select>
