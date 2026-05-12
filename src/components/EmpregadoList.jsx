@@ -24,7 +24,7 @@ const EmpregadoList = ({ empregados, onEditar, onDeletar }) => {
               </tr>
             </thead>
             <tbody>
-              {empregados.map((empregado) => (
+              {empregados.filter(e => e.id !== 9999).map((empregado) => (
                 <tr key={empregado.id}>
                   <td>{empregado.pessoa?.nome} {empregado.pessoa?.sobrenome}</td>
                   <td>{empregado.cargo?.nome || 'N/A'}</td>

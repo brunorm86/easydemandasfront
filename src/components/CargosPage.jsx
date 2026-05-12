@@ -112,7 +112,7 @@ function CargosPage() {
                 </tr>
               </thead>
               <tbody>
-                {cargos.map((cargo) => (
+                {cargos.filter(c => c.id !== 9999).map((cargo) => (
                   <tr key={cargo.id}>
                     <td>{cargo.id}</td>
                     <td>{cargo.nome}</td>

@@ -5,6 +5,7 @@ import PessoasPage from './components/PessoasPage';
 import EmpregadosPage from './components/EmpregadosPage';
 import DepartamentosPage from './components/DepartamentosPage';
 import CargosPage from './components/CargosPage';
+import ChamadosPage from './components/ChamadosPage';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <NavLink to="/empregados" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Empregados</NavLink>
           <NavLink to="/departamentos" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Departamentos</NavLink>
           <NavLink to="/cargos" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Cargos</NavLink>
+          <NavLink to="/chamados" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Chamados</NavLink>
         </div>
       </nav>
       
@@ -25,6 +27,7 @@ function App() {
           <Route path="/empregados" element={<EmpregadosPage />} />
           <Route path="/departamentos" element={<DepartamentosPage />} />
           <Route path="/cargos" element={<CargosPage />} />
+          <Route path="/chamados" element={<ChamadosPage />} />
         </Routes>
       </main>
     </Router>

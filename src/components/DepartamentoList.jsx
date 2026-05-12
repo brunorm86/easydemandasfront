@@ -22,7 +22,7 @@ const DepartamentoList = ({ departamentos, onEditar, onDeletar }) => {
               </tr>
             </thead>
             <tbody>
-              {departamentos.map((dept) => (
+              {departamentos.filter(d => d.id !== 9999).map((dept) => (
                 <tr key={dept.id}>
                   <td>{dept.nome}</td>
                   <td>{dept.sigla || '-'}</td>

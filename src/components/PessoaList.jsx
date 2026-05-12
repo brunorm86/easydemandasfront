@@ -27,7 +27,7 @@ const PessoaList = ({ pessoas, onEditar, onDeletar }) => {
               </tr>
             </thead>
             <tbody>
-              {pessoas.map((pessoa) => (
+              {pessoas.filter(p => p.id !== 9999).map((pessoa) => (
                 <tr key={pessoa.id}>
                   <td>{pessoa.id}</td>
                   <td>{pessoa.nome}</td>
