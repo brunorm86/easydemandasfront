@@ -1,14 +1,36 @@
 // src/components/DepartamentoList.jsx
-import React from 'react';
+import React, { useState } from 'react';
 
 const DepartamentoList = ({ departamentos, onEditar, onDeletar }) => {
+  const [sortField, setSortField] = useState(null); // 'nome'
+  const [sortDir,   setSortDir]   = useState('asc');
+
+  const handleSort = (field) => {
+    if (sortField === field) setSortDir(d => d === 'asc' ? 'desc' : 'asc');
+    else { setSortField(field); setSortDir('asc'); }
+  };
+
+  const sorted = [...departamentos].filter(d => d.id !== 9999).sort((a, b) => {
+    if (!sortField) return 0;
+    return sortDir === 'asc' ? a.nome.localeCompare(b.nome) : b.nome.localeCompare(a.nome);
+  });
+
+  const icon = () => sortField === 'nome' ? (sortDir === 'asc' ? ' ▲' : ' ▼') : ' ⇅';
+
   return (
     <div className="card glass-container">
       <div className="page-header">
         <h2 className="page-title">Lista de Departamentos</h2>
+        <button
+          className={`btn ${sortField === 'nome' ? 'btn-primary' : 'btn-secondary'}`}
+          onClick={() => handleSort('nome')}
+          title="Ordenar por nome"
+        >
+          A→Z{icon()}
+        </button>
       </div>
-      
-      {departamentos.length === 0 ? (
+
+      {sorted.length === 0 ? (
         <p style={{ color: 'var(--text-secondary)' }}>Nenhum departamento cadastrado ainda.</p>
       ) : (
         <div className="table-container">
@@ -22,25 +44,15 @@ const DepartamentoList = ({ departamentos, onEditar, onDeletar }) => {
               </tr>
             </thead>
             <tbody>
-              {departamentos.filter(d => d.id !== 9999).map((dept) => (
+              {sorted.map((dept) => (
                 <tr key={dept.id}>
                   <td>{dept.nome}</td>
                   <td>{dept.sigla || '-'}</td>
-                  <td>{dept.responsavel?.pessoa ? `${dept.responsavel.pessoa.nome} ${dept.responsavel.pessoa.sobrenome}` : 'Sem responsável'}</td>
+                  <td>{dept.responsavel ? `${dept.responsavel.nome} ${dept.responsavel.sobrenome}` : 'Sem responsável'}</td>
                   <td>
                     <div className="flex gap-2">
-                      <button
-                        className="btn btn-secondary"
-                        onClick={() => onEditar(dept)}
-                      >
-                        Editar
-                      </button>
-                      <button
-                        className="btn btn-danger"
-                        onClick={() => onDeletar(dept.id)}
-                      >
-                        Deletar
-                      </button>
+                      <button className="btn btn-secondary" onClick={() => onEditar(dept)}>Editar</button>
+                      <button className="btn btn-danger"    onClick={() => onDeletar(dept.id)}>Deletar</button>
                     </div>
                   </td>
                 </tr>

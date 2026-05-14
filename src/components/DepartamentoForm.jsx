@@ -69,9 +69,9 @@ const DepartamentoForm = ({ departamentoEditando, onSalvar, onCancelar }) => {
             <label className="form-label" htmlFor="responsavelId">Empregado Responsável *</label>
             <select className="form-input" id="responsavelId" name="responsavelId" value={departamento.responsavelId} onChange={handleChange} required>
               <option value="" disabled>Selecione um empregado...</option>
-              {empregados.map((emp) => (
+              {empregados.filter(e => e.id !== 9999).map((emp) => (
                 <option key={emp.id} value={emp.id}>
-                  {emp.pessoa?.nome} {emp.pessoa?.sobrenome} - {emp.cargo?.nome}
+                  {emp.nome} {emp.sobrenome} - {emp.cargo?.nome}
                 </option>
               ))}
             </select>

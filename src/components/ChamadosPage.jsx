@@ -19,7 +19,6 @@ function ChamadosPage() {
   const [departamentoId, setDepartamentoId] = useState('');
   const [custo, setCusto] = useState('');
   const [nivelCriticidade, setNivelCriticidade] = useState('Baixo');
-  const [urgencia, setUrgencia] = useState('Baixa');
   const [observacoes, setObservacoes] = useState('');
   const [encaminhamentos, setEncaminhamentos] = useState('');
 
@@ -64,7 +63,6 @@ function ChamadosPage() {
             departamentoId: parseInt(departamentoId),
             custo: custo ? parseFloat(custo) : null,
             nivelCriticidade,
-            urgencia,
             observacoes: observacoes || null,
             encaminhamentos: encaminhamentos || null
         }
@@ -95,7 +93,6 @@ function ChamadosPage() {
       setDepartamentoId('');
       setCusto('');
       setNivelCriticidade('Baixo');
-      setUrgencia('Baixa');
       setObservacoes('');
       setEncaminhamentos('');
       setEditandoId(null);
@@ -113,7 +110,6 @@ function ChamadosPage() {
         setDepartamentoId(chamado.detalhes.departamentoId);
         setCusto(chamado.detalhes.custo || '');
         setNivelCriticidade(chamado.detalhes.nivelCriticidade || 'Baixo');
-        setUrgencia(chamado.detalhes.urgencia || 'Baixa');
         setObservacoes(chamado.detalhes.observacoes || '');
         setEncaminhamentos(chamado.detalhes.encaminhamentos || '');
     }
@@ -136,13 +132,52 @@ function ChamadosPage() {
 
   const getNomeEmpregado = (id) => {
       const emp = empregados.find(e => e.id === id);
-      return emp && emp.pessoa ? `${emp.pessoa.nome} ${emp.pessoa.sobrenome}` : 'Desconhecido';
+      return emp ? `${emp.nome} ${emp.sobrenome}` : 'Desconhecido';
   };
 
   const getNomeDepto = (id) => {
       const dep = departamentos.find(d => d.id === id);
       return dep ? dep.nome : 'Desconhecido';
   };
+
+  const [sortField, setSortField] = useState(null); // 'titulo' | 'data'
+  const [sortDir, setSortDir] = useState('asc');
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortDir(prev => prev === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDir('asc');
+    }
+  };
+
+  const getSortedChamados = () => {
+    if (!sortField) return chamados;
+    
+    return [...chamados].sort((a, b) => {
+      let valA, valB;
+      
+      if (sortField === 'titulo') {
+        valA = a.titulo.toLowerCase();
+        valB = b.titulo.toLowerCase();
+      } else {
+        valA = a.dataAbertura;
+        valB = b.dataAbertura;
+      }
+      
+      if (valA < valB) return sortDir === 'asc' ? -1 : 1;
+      if (valA > valB) return sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+  };
+
+  const sortIcon = (field) => {
+    if (sortField !== field) return ' ⇅';
+    return sortDir === 'asc' ? ' ▲' : ' ▼';
+  };
+
+  const sortedChamados = getSortedChamados();
 
   return (
     <div className="page-container glass-container animate-fade-in" style={{ padding: '20px', marginTop: '20px' }}>
@@ -180,7 +215,7 @@ function ChamadosPage() {
             <select className="form-input" value={solicitanteId} onChange={(e) => setSolicitanteId(e.target.value)} required>
                 <option value="">Selecione um empregado</option>
                 {empregados.map(e => (
-                    <option key={e.id} value={e.id}>{e.pessoa?.nome} {e.pessoa?.sobrenome} (ID: {e.id})</option>
+                    <option key={e.id} value={e.id}>{e.nome} {e.sobrenome} (ID: {e.id})</option>
                 ))}
             </select>
           </div>
@@ -219,15 +254,6 @@ function ChamadosPage() {
             </select>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Urgência *</label>
-            <select className="form-input" value={urgencia} onChange={(e) => setUrgencia(e.target.value)} required>
-                <option value="Baixa">Baixa</option>
-                <option value="Media">Média</option>
-                <option value="Alta">Alta</option>
-            </select>
-          </div>
-
           <div className="form-group" style={{ gridColumn: '1 / -1' }}>
             <label className="form-label">Observações</label>
             <textarea className="form-input" value={observacoes} onChange={(e) => setObservacoes(e.target.value)} rows="2"></textarea>
@@ -256,8 +282,25 @@ function ChamadosPage() {
       </div>
 
       <div className="card list-card" style={{ background: 'var(--bg-color-secondary)', borderRadius: '12px', padding: '20px' }}>
-        <h2 style={{ marginBottom: '15px' }}>Chamados Abertos / Histórico</h2>
-        {chamados.length === 0 ? (
+        <div className="page-header" style={{ marginBottom: '15px' }}>
+          <h2>Chamados Abertos / Histórico</h2>
+          <div className="flex gap-2">
+            <button 
+              className={`btn ${sortField === 'titulo' ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => handleSort('titulo')}
+            >
+              Título {sortIcon('titulo')}
+            </button>
+            <button 
+              className={`btn ${sortField === 'data' ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => handleSort('data')}
+            >
+              Data {sortIcon('data')}
+            </button>
+          </div>
+        </div>
+        
+        {sortedChamados.length === 0 ? (
           <p className="empty-state">Nenhum chamado cadastrado ainda.</p>
         ) : (
           <div className="table-container">
@@ -266,6 +309,7 @@ function ChamadosPage() {
                 <tr>
                   <th>ID</th>
                   <th>Título</th>
+                  <th>Data</th>
                   <th>Status</th>
                   <th>Solicitante</th>
                   <th>Centro de Custo</th>
@@ -274,10 +318,11 @@ function ChamadosPage() {
                 </tr>
               </thead>
               <tbody>
-                {chamados.map((chamado) => (
+                {sortedChamados.map((chamado) => (
                   <tr key={chamado.id}>
                     <td>{chamado.id}</td>
                     <td><strong>{chamado.titulo}</strong></td>
+                    <td>{chamado.dataAbertura ? new Date(chamado.dataAbertura).toLocaleDateString() : 'N/A'}</td>
                     <td>
                       <span style={{
                           padding: '4px 8px', 
@@ -302,7 +347,7 @@ function ChamadosPage() {
                           color: chamado.detalhes?.nivelCriticidade === 'Critico' ? 'var(--danger-color)' : 
                                  chamado.detalhes?.nivelCriticidade === 'Alto' ? '#f59e0b' : 'var(--text-secondary)'
                       }}>
-                        {chamado.detalhes?.urgencia} / {chamado.detalhes?.nivelCriticidade}
+                        {chamado.detalhes?.nivelCriticidade}
                       </span>
                     </td>
                     <td className="action-buttons">
