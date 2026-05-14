@@ -59,20 +59,21 @@ function CargosPage() {
   };
 
   return (
-    <div className="page-container">
+    <div className="page-container glass-container animate-fade-in" style={{ padding: '20px', marginTop: '20px' }}>
       <div className="page-header">
-        <h1>Gestão de Cargos</h1>
-        <p className="subtitle">Cadastre os cargos disponíveis para os Empregados</p>
+        <h1 className="page-title text-gradient">Gestão de Cargos</h1>
+        <p className="subtitle" style={{ color: 'var(--text-secondary)' }}>Cadastre os cargos disponíveis para os Empregados</p>
       </div>
 
-      {erro && <div className="error-message">{erro}</div>}
+      {erro && <div className="error-message" style={{ color: 'var(--danger-color)', marginBottom: '10px' }}>{erro}</div>}
 
-      <div className="card form-card">
-        <h2>{editandoId ? 'Editar Cargo' : 'Novo Cargo'}</h2>
+      <div className="card form-card" style={{ background: 'var(--bg-color-secondary)', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
+        <h2 style={{ marginBottom: '15px' }}>{editandoId ? 'Editar Cargo' : 'Novo Cargo'}</h2>
         <form onSubmit={handleSalvar} className="form-grid">
           <div className="form-group">
-            <label>Nome do Cargo</label>
+            <label className="form-label">Nome do Cargo</label>
             <input
+              className="form-input"
               type="text"
               value={nome}
               onChange={(e) => setNome(e.target.value)}
@@ -80,8 +81,8 @@ function CargosPage() {
               placeholder="Ex: Desenvolvedor Senior"
             />
           </div>
-          <div className="form-actions">
-            <button type="submit" className="btn btn-primary">
+          <div className="form-actions" style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: '1px' }}>
+            <button type="submit" className="btn btn-primary" style={{ marginRight: '10px' }}>
               {editandoId ? 'Atualizar Cargo' : 'Adicionar Cargo'}
             </button>
             {editandoId && (
@@ -97,13 +98,13 @@ function CargosPage() {
         </form>
       </div>
 
-      <div className="card list-card">
-        <h2>Cargos Cadastrados</h2>
+      <div className="card list-card" style={{ background: 'var(--bg-color-secondary)', borderRadius: '12px', padding: '20px' }}>
+        <h2 style={{ marginBottom: '15px' }}>Cargos Cadastrados</h2>
         {cargos.length === 0 ? (
           <p className="empty-state">Nenhum cargo cadastrado ainda.</p>
         ) : (
-          <div className="table-responsive">
-            <table className="modern-table">
+          <div className="table-container">
+            <table className="table">
               <thead>
                 <tr>
                   <th>ID</th>
@@ -116,11 +117,11 @@ function CargosPage() {
                   <tr key={cargo.id}>
                     <td>{cargo.id}</td>
                     <td>{cargo.nome}</td>
-                    <td className="actions-cell">
-                      <button className="btn btn-small btn-secondary" onClick={() => handleEditar(cargo)}>
+                    <td className="action-buttons">
+                      <button className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }} onClick={() => handleEditar(cargo)}>
                         Editar
                       </button>
-                      <button className="btn btn-small btn-danger" onClick={() => handleExcluir(cargo.id)}>
+                      <button className="btn btn-danger" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }} onClick={() => handleExcluir(cargo.id)}>
                         Excluir
                       </button>
                     </td>

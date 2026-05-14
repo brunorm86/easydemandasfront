@@ -63,11 +63,11 @@ const DepartamentosPage = () => {
   };
 
   return (
-    <>
+    <div className="animate-fade-in">
       <div className="page-header">
-        <h1 className="page-title">Gerenciar Departamentos</h1>
+        <h1 className="page-title text-gradient">Gerenciar Departamentos</h1>
       </div>
-      {erro && <div style={{backgroundColor: '#ef4444', color: 'white', padding: '1rem', borderRadius: '8px', marginBottom: '1rem'}}>{erro}</div>}
+      {erro && <div className="error-message" style={{ color: 'var(--danger-color)', marginBottom: '10px' }}>{erro}</div>}
       
       <DepartamentoForm
         departamentoEditando={departamentoEditando}
@@ -79,7 +79,7 @@ const DepartamentosPage = () => {
         onEditar={handleEditar}
         onDeletar={handleDeletar}
       />
-    </>
+    </div>
   );
 };
 
