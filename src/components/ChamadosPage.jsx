@@ -51,8 +51,8 @@ function ChamadosPage() {
 
   const handleSalvar = async (e) => {
     e.preventDefault();
-    if (!titulo || !descricao || !solicitanteId || !departamentoId) {
-        setErro('Preencha os campos obrigatórios (Título, Descrição, Solicitante e Centro de Custo).');
+    if (!titulo || !descricao || (editandoId && !solicitanteId) || !departamentoId) {
+        setErro('Preencha os campos obrigatórios (Título, Descrição, Centro de Custo' + (editandoId ? ' e Solicitante' : '') + ').');
         return;
     }
 
@@ -60,7 +60,7 @@ function ChamadosPage() {
         titulo,
         descricao,
         status,
-        solicitanteId: parseInt(solicitanteId),
+        solicitanteId: solicitanteId ? parseInt(solicitanteId) : 0,
         detalhes: {
             departamentoId: parseInt(departamentoId),
             custo: custo ? parseFloat(custo) : null,
@@ -214,25 +214,29 @@ function ChamadosPage() {
             <input className="form-input" type="text" value={titulo} onChange={(e) => setTitulo(e.target.value)} required placeholder="Ex: Problema na rede" />
           </div>
           
-          <div className="form-group">
-            <label className="form-label">Status *</label>
-            <select className="form-input" value={status} onChange={(e) => setStatus(e.target.value)} required>
-                <option value="Aberto">Aberto</option>
-                <option value="Em Andamento">Em Andamento</option>
-                <option value="Concluído">Concluído</option>
-                <option value="Cancelado">Cancelado</option>
-            </select>
-          </div>
+          {editandoId && (
+            <div className="form-group">
+              <label className="form-label">Status *</label>
+              <select className="form-input" value={status} onChange={(e) => setStatus(e.target.value)} required>
+                  <option value="Aberto">Aberto</option>
+                  <option value="Em Andamento">Em Andamento</option>
+                  <option value="Concluído">Concluído</option>
+                  <option value="Cancelado">Cancelado</option>
+              </select>
+            </div>
+          )}
 
-          <div className="form-group">
-            <label className="form-label">Solicitante *</label>
-            <select className="form-input" value={solicitanteId} onChange={(e) => setSolicitanteId(e.target.value)} required>
-                <option value="">Selecione um empregado</option>
-                {empregados.map(e => (
-                    <option key={e.id} value={e.id}>{e.nome} {e.sobrenome} (ID: {e.id})</option>
-                ))}
-            </select>
-          </div>
+          {editandoId && (
+            <div className="form-group">
+              <label className="form-label">Solicitante *</label>
+              <select className="form-input" value={solicitanteId} onChange={(e) => setSolicitanteId(e.target.value)} required>
+                  <option value="">Selecione um empregado</option>
+                  {empregados.map(e => (
+                      <option key={e.id} value={e.id}>{e.nome} {e.sobrenome} (ID: {e.id})</option>
+                  ))}
+              </select>
+            </div>
+          )}
 
           <div className="form-group" style={{ gridColumn: '1 / -1' }}>
             <label className="form-label">Descrição *</label>
