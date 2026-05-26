@@ -3,8 +3,10 @@ import { useState, useEffect } from 'react';
 import { getChamados, criarChamado, atualizarChamado, deletarChamado } from '../services/ChamadoService';
 import { getEmpregados } from '../services/EmpregadoService';
 import { getDepartamentos } from '../services/DepartamentoService';
+import { useAuth } from '../contexts/AuthContext';
 
 function ChamadosPage() {
+  const { hasRole } = useAuth();
   const [chamados, setChamados] = useState([]);
   const [empregados, setEmpregados] = useState([]);
   const [departamentos, setDepartamentos] = useState([]);
@@ -70,6 +72,10 @@ function ChamadosPage() {
 
     try {
       if (editandoId) {
+        if (!hasRole(['Suporte', 'Gestor'])) {
+          setErro('Você não tem permissão para editar chamados.');
+          return;
+        }
         payload.id = editandoId;
         payload.detalhes.id = detalheId;
         payload.detalhes.chamadoId = editandoId;
@@ -100,6 +106,10 @@ function ChamadosPage() {
   };
 
   const handleEditar = (chamado) => {
+    if (!hasRole(['Suporte', 'Gestor'])) {
+      setErro('Você não tem permissão para editar chamados.');
+      return;
+    }
     setTitulo(chamado.titulo);
     setDescricao(chamado.descricao);
     setStatus(chamado.status);
@@ -119,6 +129,10 @@ function ChamadosPage() {
   };
 
   const handleExcluir = async (id) => {
+    if (!hasRole(['Suporte', 'Gestor'])) {
+      setErro('Você não tem permissão para excluir chamados.');
+      return;
+    }
     if (window.confirm('Tem certeza que deseja excluir este chamado?')) {
       try {
         await deletarChamado(id);
@@ -314,7 +328,7 @@ function ChamadosPage() {
                   <th>Solicitante</th>
                   <th>Centro de Custo</th>
                   <th>Criticidade</th>
-                  <th>Ações</th>
+                  {hasRole(['Suporte', 'Gestor']) && <th>Ações</th>}
                 </tr>
               </thead>
               <tbody>
@@ -350,14 +364,16 @@ function ChamadosPage() {
                         {chamado.detalhes?.nivelCriticidade}
                       </span>
                     </td>
-                    <td className="action-buttons">
-                      <button className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }} onClick={() => handleEditar(chamado)}>
-                        Editar
-                      </button>
-                      <button className="btn btn-danger" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }} onClick={() => handleExcluir(chamado.id)}>
-                        Excluir
-                      </button>
-                    </td>
+                    {hasRole(['Suporte', 'Gestor']) && (
+                      <td className="action-buttons">
+                        <button className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', marginRight: '5px' }} onClick={() => handleEditar(chamado)}>
+                          Editar
+                        </button>
+                        <button className="btn btn-danger" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }} onClick={() => handleExcluir(chamado.id)}>
+                          Excluir
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
