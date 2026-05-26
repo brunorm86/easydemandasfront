@@ -3,20 +3,20 @@ import React, { useState, useEffect } from 'react';
 import { getEmpregados, criarEmpregado, atualizarEmpregado, deletarEmpregado } from '../services/EmpregadoService';
 import EmpregadoForm from './EmpregadoForm';
 import EmpregadoList from './EmpregadoList';
+import { useNotification } from '../contexts/NotificationContext';
 
 const EmpregadosPage = () => {
+  const { showNotification } = useNotification();
   const [empregados, setEmpregados] = useState([]);
   const [empregadoEditando, setEmpregadoEditando] = useState(null);
-  const [erro, setErro] = useState('');
 
 
   const carregarEmpregados = async () => {
     try {
       const data = await getEmpregados();
       setEmpregados(data);
-      setErro('');
     } catch (error) {
-      setErro('Não foi possível carregar os empregados.');
+      showNotification('Não foi possível carregar os empregados.', 'error');
       console.error(error);
     }
   };
@@ -29,14 +29,15 @@ const EmpregadosPage = () => {
     try {
       if (empregadoEditando) {
         await atualizarEmpregado(empregado);
+        showNotification('Empregado atualizado com sucesso!', 'success');
         setEmpregadoEditando(null);
       } else {
         await criarEmpregado(empregado);
+        showNotification('Empregado criado com sucesso!', 'success');
       }
       await carregarEmpregados();
-      setErro('');
     } catch (error) {
-      setErro('Erro ao salvar o empregado.');
+      showNotification('Erro ao salvar o empregado.', 'error');
       console.error(error);
     }
   };
@@ -53,10 +54,10 @@ const EmpregadosPage = () => {
     if (window.confirm('Tem certeza que deseja deletar este empregado?')) {
       try {
         await deletarEmpregado(id);
+        showNotification('Empregado deletado com sucesso!', 'success');
         await carregarEmpregados();
-        setErro('');
       } catch (error) {
-        setErro('Erro ao deletar o empregado.');
+        showNotification('Erro ao deletar o empregado.', 'error');
         console.error(error);
       }
     }
@@ -67,7 +68,6 @@ const EmpregadosPage = () => {
       <div className="page-header">
         <h1 className="page-title text-gradient">Gerenciar Empregados</h1>
       </div>
-      {erro && <div className="error-message" style={{ color: 'var(--danger-color)', marginBottom: '10px' }}>{erro}</div>}
       
       <EmpregadoForm
         empregadoEditando={empregadoEditando}

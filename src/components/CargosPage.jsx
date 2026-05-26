@@ -1,19 +1,19 @@
 import { useState, useEffect } from 'react';
 import { getCargos, createCargo, updateCargo, deleteCargo } from '../services/CargoService';
+import { useNotification } from '../contexts/NotificationContext';
 
 function CargosPage() {
+  const { showNotification } = useNotification();
   const [cargos, setCargos] = useState([]);
   const [nome, setNome] = useState('');
   const [editandoId, setEditandoId] = useState(null);
-  const [erro, setErro] = useState('');
 
   const carregarCargos = async () => {
     try {
       const data = await getCargos();
       setCargos(data);
-      setErro('');
     } catch (error) {
-      setErro('Não foi possível carregar os cargos.');
+      showNotification('Não foi possível carregar os cargos.', 'error');
       console.error(error);
     }
   };
@@ -29,14 +29,16 @@ function CargosPage() {
     try {
       if (editandoId) {
         await updateCargo(editandoId, { id: editandoId, nome });
+        showNotification('Cargo atualizado com sucesso!', 'success');
       } else {
         await createCargo({ nome });
+        showNotification('Cargo criado com sucesso!', 'success');
       }
       setNome('');
       setEditandoId(null);
       carregarCargos();
     } catch (error) {
-      setErro('Erro ao salvar cargo.');
+      showNotification('Erro ao salvar cargo.', 'error');
       console.error(error);
     }
   };
@@ -50,9 +52,10 @@ function CargosPage() {
     if (window.confirm('Tem certeza que deseja excluir este cargo?')) {
       try {
         await deleteCargo(id);
+        showNotification('Cargo excluído com sucesso!', 'success');
         carregarCargos();
       } catch (error) {
-        setErro('Erro ao excluir cargo. Pode estar em uso.');
+        showNotification('Erro ao excluir cargo. Pode estar em uso.', 'error');
         console.error(error);
       }
     }
@@ -64,8 +67,6 @@ function CargosPage() {
         <h1 className="page-title text-gradient">Gestão de Cargos</h1>
         <p className="subtitle" style={{ color: 'var(--text-secondary)' }}>Cadastre os cargos disponíveis para os Empregados</p>
       </div>
-
-      {erro && <div className="error-message" style={{ color: 'var(--danger-color)', marginBottom: '10px' }}>{erro}</div>}
 
       <div className="card form-card" style={{ background: 'var(--bg-color-secondary)', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
         <h2 style={{ marginBottom: '15px' }}>{editandoId ? 'Editar Cargo' : 'Novo Cargo'}</h2>

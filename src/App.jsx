@@ -2,6 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import LoginPage from './components/LoginPage';
 import EmpregadosPage from './components/EmpregadosPage';
@@ -9,6 +10,7 @@ import DepartamentosPage from './components/DepartamentosPage';
 import CargosPage from './components/CargosPage';
 import ChamadosPage from './components/ChamadosPage';
 import DashboardPage from './components/DashboardPage';
+import SuporteChamadosPage from './components/SuporteChamadosPage';
 
 function Navigation() {
   const { user, logoutUser, hasRole } = useAuth();
@@ -29,6 +31,9 @@ function Navigation() {
           </>
         )}
         <NavLink to="/chamados" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Chamados</NavLink>
+        {hasRole(['Suporte', 'Gestor']) && (
+          <NavLink to="/suporte-chamados" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Filtro Suporte</NavLink>
+        )}
         <NavLink to="/dashboard" className={({ isActive }) => (isActive ? 'nav-link active nav-link-dashboard' : 'nav-link nav-link-dashboard')}>📊 Dashboard</NavLink>
       </div>
       <div className="navbar-user" style={{ display: 'flex', alignItems: 'center', gap: '15px', marginLeft: 'auto' }}>
@@ -74,6 +79,12 @@ function MainRoutes() {
           </ProtectedRoute>
         } />
         
+        <Route path="/suporte-chamados" element={
+          <ProtectedRoute allowedRoles={['Suporte', 'Gestor']}>
+            <SuporteChamadosPage />
+          </ProtectedRoute>
+        } />
+        
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <DashboardPage />
@@ -88,12 +99,14 @@ function MainRoutes() {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Navigation />
-        <MainRoutes />
-      </Router>
-    </AuthProvider>
+    <NotificationProvider>
+      <AuthProvider>
+        <Router>
+          <Navigation />
+          <MainRoutes />
+        </Router>
+      </AuthProvider>
+    </NotificationProvider>
   );
 }
 

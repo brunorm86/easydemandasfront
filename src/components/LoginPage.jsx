@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useNotification } from '../contexts/NotificationContext';
 
 const LoginPage = () => {
+  const { showNotification } = useNotification();
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { loginUser } = useAuth();
   const navigate = useNavigate();
@@ -13,25 +14,23 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email || !senha) {
-      setError('Por favor, preencha todos os campos.');
+      showNotification('Por favor, preencha todos os campos.', 'error');
       return;
     }
 
-    setError('');
     setLoading(true);
 
     const result = await loginUser(email, senha);
     if (result.success) {
       navigate('/dashboard');
     } else {
-      setError(result.error);
+      showNotification(result.error, 'error');
       setLoading(false);
     }
   };
 
   // Helper function to login with a specific seeded user (great for development and demonstration)
   const handleQuickLogin = async (selectedEmail) => {
-    setError('');
     setLoading(true);
     setEmail(selectedEmail);
     setSenha('123456');
@@ -40,7 +39,7 @@ const LoginPage = () => {
     if (result.success) {
       navigate('/dashboard');
     } else {
-      setError(result.error);
+      showNotification(result.error, 'error');
       setLoading(false);
     }
   };
@@ -53,8 +52,6 @@ const LoginPage = () => {
           <h1 style={titleStyle}>EasyDemandas</h1>
           <p style={subtitleStyle}>Gerenciamento inteligente de chamados e recursos</p>
         </div>
-
-        {error && <div style={errorStyle}>{error}</div>}
 
         <form onSubmit={handleSubmit} style={formStyle}>
           <div style={inputGroupStyle}>

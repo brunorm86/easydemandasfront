@@ -4,8 +4,13 @@ import { getChamados, criarChamado, atualizarChamado, deletarChamado } from '../
 import { getEmpregados } from '../services/EmpregadoService';
 import { getDepartamentos } from '../services/DepartamentoService';
 import { useAuth } from '../contexts/AuthContext';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useNotification } from '../contexts/NotificationContext';
 
 function ChamadosPage() {
+  const { showNotification } = useNotification();
+  const location = useLocation();
+  const navigate = useNavigate();
   const { hasRole } = useAuth();
   const [chamados, setChamados] = useState([]);
   const [empregados, setEmpregados] = useState([]);
@@ -26,7 +31,6 @@ function ChamadosPage() {
 
   const [editandoId, setEditandoId] = useState(null);
   const [detalheId, setDetalheId] = useState(null);
-  const [erro, setErro] = useState('');
 
   const carregarDados = async () => {
     try {
@@ -38,9 +42,8 @@ function ChamadosPage() {
       setChamados(chamadosData);
       setEmpregados(empregadosData);
       setDepartamentos(deptosData);
-      setErro('');
     } catch (error) {
-      setErro('Não foi possível carregar os dados.');
+      showNotification('Não foi possível carregar os dados.', 'error');
       console.error(error);
     }
   };
@@ -49,10 +52,17 @@ function ChamadosPage() {
     carregarDados();
   }, []);
 
+  useEffect(() => {
+    if (location.state?.editChamado) {
+        handleEditar(location.state.editChamado);
+        navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, navigate]);
+
   const handleSalvar = async (e) => {
     e.preventDefault();
     if (!titulo || !descricao || (editandoId && !solicitanteId) || !departamentoId) {
-        setErro('Preencha os campos obrigatórios (Título, Descrição, Centro de Custo' + (editandoId ? ' e Solicitante' : '') + ').');
+        showNotification('Preencha os campos obrigatórios.', 'error');
         return;
     }
 
@@ -73,20 +83,22 @@ function ChamadosPage() {
     try {
       if (editandoId) {
         if (!hasRole(['Suporte', 'Gestor'])) {
-          setErro('Você não tem permissão para editar chamados.');
+          showNotification('Você não tem permissão para editar chamados.', 'error');
           return;
         }
         payload.id = editandoId;
         payload.detalhes.id = detalheId;
         payload.detalhes.chamadoId = editandoId;
         await atualizarChamado(payload);
+        showNotification('Chamado atualizado com sucesso!', 'success');
       } else {
         await criarChamado(payload);
+        showNotification('Chamado criado com sucesso!', 'success');
       }
       limparForm();
       carregarDados();
     } catch (error) {
-      setErro('Erro ao salvar chamado.');
+      showNotification('Erro ao salvar chamado.', 'error');
       console.error(error);
     }
   };
@@ -107,7 +119,7 @@ function ChamadosPage() {
 
   const handleEditar = (chamado) => {
     if (!hasRole(['Suporte', 'Gestor'])) {
-      setErro('Você não tem permissão para editar chamados.');
+      showNotification('Você não tem permissão para editar chamados.', 'error');
       return;
     }
     setTitulo(chamado.titulo);
@@ -130,15 +142,16 @@ function ChamadosPage() {
 
   const handleExcluir = async (id) => {
     if (!hasRole(['Suporte', 'Gestor'])) {
-      setErro('Você não tem permissão para excluir chamados.');
+      showNotification('Você não tem permissão para excluir chamados.', 'error');
       return;
     }
     if (window.confirm('Tem certeza que deseja excluir este chamado?')) {
       try {
         await deletarChamado(id);
+        showNotification('Chamado excluído com sucesso!', 'success');
         carregarDados();
       } catch (error) {
-        setErro('Erro ao excluir chamado.');
+        showNotification('Erro ao excluir chamado.', 'error');
         console.error(error);
       }
     }
@@ -199,8 +212,6 @@ function ChamadosPage() {
         <h1 className="page-title text-gradient">Gestão de Chamados</h1>
         <p className="subtitle" style={{ color: 'var(--text-secondary)' }}>Cadastre e acompanhe os chamados do sistema</p>
       </div>
-
-      {erro && <div className="error-message" style={{ color: 'var(--danger-color)', marginBottom: '10px' }}>{erro}</div>}
 
       <div className="card form-card" style={{ background: 'var(--bg-color-secondary)', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
         <h2 style={{ marginBottom: '15px' }}>{editandoId ? 'Editar Chamado' : 'Novo Chamado'}</h2>
