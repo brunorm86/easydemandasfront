@@ -12,6 +12,18 @@ import ChamadosPage from './components/ChamadosPage';
 import DashboardPage from './components/DashboardPage';
 import SuporteChamadosPage from './components/SuporteChamadosPage';
 
+const logoutBtnStyle = {
+  backgroundColor: '#ef4444',
+  color: 'white',
+  border: 'none',
+  padding: '6px 12px',
+  borderRadius: '8px',
+  cursor: 'pointer',
+  fontSize: '13px',
+  fontWeight: '600',
+  transition: 'all 0.2s ease',
+};
+
 function Navigation() {
   const { user, logoutUser, hasRole } = useAuth();
 
@@ -109,17 +121,5 @@ function App() {
     </NotificationProvider>
   );
 }
-
-const logoutBtnStyle = {
-  background: 'rgba(239, 68, 68, 0.1)',
-  color: '#ef4444',
-  border: '1px solid rgba(239, 68, 68, 0.2)',
-  padding: '6px 12px',
-  borderRadius: '8px',
-  cursor: 'pointer',
-  fontSize: '13px',
-  fontWeight: '600',
-  transition: 'all 0.2s ease',
-};
 
 export default App;

@@ -136,6 +136,26 @@ const EmpregadoForm = ({ empregadoEditando, onSalvar, onCancelar }) => {
           </div>
         </div>
 
+        {/* Seção: Acesso ao Sistema */}
+        <p style={{ color: 'var(--primary-color)', fontWeight: 600, marginBottom: '0.75rem', marginTop: '1.5rem', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          Acesso ao Sistema
+        </p>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+          <div className="form-group">
+            <label className="form-label" htmlFor="senhaHash">Senha de Acesso {empregadoEditando ? '(Deixe em branco para manter)' : '*'}</label>
+            <input className="form-input" type="password" id="senhaHash" name="senhaHash" value={empregado.senhaHash || ''} onChange={handleChange} required={!empregadoEditando} placeholder="Digite a senha" />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="perfil">Nível de Acesso *</label>
+            <select className="form-input" id="perfil" name="perfil" value={empregado.perfil} onChange={handleChange} required>
+              <option value="Comum">Comum</option>
+              <option value="Suporte">Suporte</option>
+              <option value="RH">RH</option>
+              <option value="Gestor">Gestor</option>
+            </select>
+          </div>
+        </div>
+
         <div className="flex gap-4 mt-4" style={{ justifyContent: 'flex-end' }}>
           {empregadoEditando && (
             <button type="button" className="btn btn-secondary" onClick={onCancelar}>

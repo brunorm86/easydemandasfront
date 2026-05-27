@@ -117,12 +117,12 @@ const LoginPage = () => {
           </button>
           <button 
             type="button" 
-            onClick={() => handleQuickLogin('daniel.costa@easydemandas.com')}
+            onClick={() => handleQuickLogin('henrique.rodrigues@easydemandas.com')}
             className="quick-login-btn comum"
           >
             <span className="quick-login-role">👤 Comum</span>
-            <span className="quick-login-name">Daniel Costa</span>
-            <span className="quick-login-email">daniel.costa@easydemandas.com</span>
+            <span className="quick-login-name">Henrique Rodrigues</span>
+            <span className="quick-login-email">henrique.rodrigues@easydemandas.com</span>
           </button>
         </div>
       </div>
