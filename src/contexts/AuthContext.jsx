@@ -28,14 +28,20 @@ export const AuthProvider = ({ children }) => {
         id: data.usuarioId,
         nome: data.nome,
         email: data.email,
-        perfil: data.perfil
+        perfil: data.perfil,
+        cargo: data.cargo,
+        departamento: data.departamento,
+        cpf: data.cpf
       });
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify({
         id: data.usuarioId,
         nome: data.nome,
         email: data.email,
-        perfil: data.perfil
+        perfil: data.perfil,
+        cargo: data.cargo,
+        departamento: data.departamento,
+        cpf: data.cpf
       }));
       return { success: true };
     } catch (error) {
