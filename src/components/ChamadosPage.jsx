@@ -440,7 +440,7 @@ function ChamadosPage() {
   return (
     <div className="page-container glass-container animate-fade-in" style={{ padding: '20px', marginTop: '20px' }}>
       <div className="page-header">
-        <h1 className="page-title text-gradient">Gestão de Chamados</h1>
+        <h1 className="page-title text-gradient">Meus Chamados</h1>
         <p className="subtitle" style={{ color: 'var(--text-secondary)' }}>Cadastre e acompanhe os chamados do sistema</p>
       </div>
 

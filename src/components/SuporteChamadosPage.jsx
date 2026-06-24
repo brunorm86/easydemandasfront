@@ -34,7 +34,7 @@ function SuporteChamadosPage() {
   const carregarDados = async () => {
     try {
       const [chamadosData, empregadosData, deptosData] = await Promise.all([
-        getChamados(),
+        getChamados(true),
         getEmpregados(),
         getDepartamentos()
       ]);

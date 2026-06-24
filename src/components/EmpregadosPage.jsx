@@ -25,19 +25,27 @@ const EmpregadosPage = () => {
     carregarEmpregados();
   }, []);
 
-  const handleSalvar = async (empregado) => {
+  const handleSalvar = async (empregado, fotoFile) => {
     try {
       if (empregadoEditando) {
         await atualizarEmpregado(empregado);
+        if (fotoFile) {
+          const { uploadFoto } = await import('../services/EmpregadoService');
+          await uploadFoto(empregado.id, fotoFile);
+        }
         showNotification('Empregado atualizado com sucesso!', 'success');
         setEmpregadoEditando(null);
       } else {
-        await criarEmpregado(empregado);
+        const novoEmpregado = await criarEmpregado(empregado);
+        if (fotoFile) {
+          const { uploadFoto } = await import('../services/EmpregadoService');
+          await uploadFoto(novoEmpregado.id, fotoFile);
+        }
         showNotification('Empregado criado com sucesso!', 'success');
       }
       await carregarEmpregados();
     } catch (error) {
-      showNotification('Erro ao salvar o empregado.', 'error');
+      showNotification('Erro ao salvar o empregado (tamanho da foto ou erro de rede).', 'error');
       console.error(error);
     }
   };

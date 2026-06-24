@@ -20,6 +20,7 @@ const EmpregadoForm = ({ empregadoEditando, onSalvar, onCancelar }) => {
   const [empregado, setEmpregado] = useState(EMPREGADO_VAZIO);
   const [cargos, setCargos] = useState([]);
   const [departamentos, setDepartamentos] = useState([]);
+  const [fotoFile, setFotoFile] = useState(null);
 
   useEffect(() => {
     if (empregadoEditando) {
@@ -33,6 +34,7 @@ const EmpregadoForm = ({ empregadoEditando, onSalvar, onCancelar }) => {
     } else {
       setEmpregado(EMPREGADO_VAZIO);
     }
+    setFotoFile(null); // Reset foto on edit change
   }, [empregadoEditando]);
 
   useEffect(() => {
@@ -56,6 +58,12 @@ const EmpregadoForm = ({ empregadoEditando, onSalvar, onCancelar }) => {
     setEmpregado({ ...empregado, [name]: value });
   };
 
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setFotoFile(e.target.files[0]);
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const payload = {
@@ -63,7 +71,7 @@ const EmpregadoForm = ({ empregadoEditando, onSalvar, onCancelar }) => {
       cargoId: parseInt(empregado.cargoId, 10),
       departamentoId: empregado.departamentoId ? parseInt(empregado.departamentoId, 10) : null
     };
-    onSalvar(payload);
+    onSalvar(payload, fotoFile);
   };
 
   return (
@@ -77,6 +85,10 @@ const EmpregadoForm = ({ empregadoEditando, onSalvar, onCancelar }) => {
           Dados Pessoais
         </p>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+          <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+            <label className="form-label" htmlFor="foto">Foto de Perfil (Opcional, máx 5MB, JPG/PNG)</label>
+            <input className="form-input" type="file" id="foto" accept="image/jpeg, image/png" onChange={handleFileChange} />
+          </div>
           <div className="form-group">
             <label className="form-label" htmlFor="nome">Nome *</label>
             <input className="form-input" type="text" id="nome" name="nome" value={empregado.nome} onChange={handleChange} required placeholder="Ex: João" />

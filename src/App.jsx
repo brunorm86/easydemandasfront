@@ -42,7 +42,7 @@ function Navigation() {
             <NavLink to="/cargos" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Cargos</NavLink>
           </>
         )}
-        <NavLink to="/chamados" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Chamados</NavLink>
+        <NavLink to="/chamados" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Meus Chamados</NavLink>
         {hasRole(['Suporte', 'Gestor']) && (
           <NavLink to="/suporte-chamados" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Filtro Suporte</NavLink>
         )}

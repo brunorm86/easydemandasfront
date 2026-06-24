@@ -3,8 +3,9 @@ import axios from 'axios';
 
 const API_URL = 'http://localhost:8080/api/Chamados';
 
-export const getChamados = async () => {
-  const response = await axios.get(API_URL);
+export const getChamados = async (todos = false) => {
+  const url = todos ? `${API_URL}?todos=true` : API_URL;
+  const response = await axios.get(url);
   return response.data;
 };
 
