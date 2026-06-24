@@ -93,10 +93,10 @@ function SuporteChamadosPage() {
         return;
     }
 
-    const dataAtual = new Date().toLocaleString('pt-BR');
-    const nomeDepto = getNomeDepto(parseInt(atendimentoDeptoId));
-    const userInfo = `${user.nome} (CPF: ${user.cpf || 'N/A'}) | ${user.cargo || 'S/Cargo'} | ${user.departamento || 'S/Depto'}`;
-    let logAtendimento = `[${dataAtual}] - ${userInfo} - Chamado atendido. Centro de Custo: ${nomeDepto}.`;
+    let logAtendimento = '';
+    if (atendimentoDeptoId) {
+        logAtendimento += `Atribuído ao Centro de Custo: ${getNomeDepto(parseInt(atendimentoDeptoId))}.`;
+    }
     if (atendimentoObservacoes) {
         logAtendimento += ` Observações: ${atendimentoObservacoes}`;
     }
@@ -390,9 +390,14 @@ function SuporteChamadosPage() {
                         </span>
                         </td>
                         <td className="action-buttons">
-                            {chamado.status !== 'Aberto' && (
+                            {chamado.status !== 'Aberto' && chamado.status !== 'Concluído' && (
                                 <button className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', marginRight: '5px' }} onClick={() => navigate('/chamados', { state: { editChamado: chamado } })}>
                                   Editar
+                                </button>
+                            )}
+                            {chamado.status === 'Concluído' && (
+                                <button className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', marginRight: '5px' }} onClick={() => navigate('/chamados', { state: { viewChamado: chamado } })}>
+                                  Visualizar
                                 </button>
                             )}
                             <button className="btn btn-danger" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }} onClick={() => handleExcluir(chamado.id)}>

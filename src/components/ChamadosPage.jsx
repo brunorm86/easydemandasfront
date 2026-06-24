@@ -34,6 +34,7 @@ function ChamadosPage() {
   const [novoEncaminhamento, setNovoEncaminhamento] = useState('');
 
   const [editandoId, setEditandoId] = useState(null);
+  const [visualizandoId, setVisualizandoId] = useState(null);
   const [detalheId, setDetalheId] = useState(null);
 
   const carregarDados = async () => {
@@ -59,6 +60,10 @@ function ChamadosPage() {
   useEffect(() => {
     if (location.state?.editChamado) {
         handleEditar(location.state.editChamado);
+        navigate(location.pathname, { replace: true, state: {} });
+    }
+    if (location.state?.viewChamado) {
+        handleVisualizar(location.state.viewChamado);
         navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location.state, navigate]);
@@ -92,6 +97,11 @@ function ChamadosPage() {
   };
 
   const handleBack = () => {
+    if (visualizandoId) {
+        setCurrentStep(0);
+        limparForm();
+        return;
+    }
     if (currentStep === 4 && !editandoId) {
         setCurrentStep(2);
         return;
@@ -124,18 +134,10 @@ function ChamadosPage() {
         return;
     }
 
-    const dataAtual = new Date().toLocaleString('pt-BR');
     let logFinal = encaminhamentos;
 
-    const userInfo = `${user.nome} (CPF: ${user.cpf || 'N/A'}) | ${user.cargo || 'S/Cargo'} | ${user.departamento || 'S/Depto'}`;
-
-    if (!editandoId) {
-        logFinal = `[${dataAtual}] - ${userInfo} - Chamado criado.`;
-    } else {
-        if (novoEncaminhamento) {
-            const evento = `[${dataAtual}] - ${userInfo} - Novo evento: ${novoEncaminhamento}`;
-            logFinal = logFinal ? `${logFinal}\n${evento}` : evento;
-        }
+    if (editandoId && novoEncaminhamento) {
+        logFinal = logFinal ? `${logFinal}\n${novoEncaminhamento}` : novoEncaminhamento;
     }
 
     const payload = {
@@ -188,6 +190,7 @@ function ChamadosPage() {
       setEncaminhamentos('');
       setNovoEncaminhamento('');
       setEditandoId(null);
+      setVisualizandoId(null);
       setDetalheId(null);
   };
 
@@ -212,6 +215,26 @@ function ChamadosPage() {
     
     setEditandoId(chamado.id);
     setCurrentStep(1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleVisualizar = (chamado) => {
+    setTitulo(chamado.titulo);
+    setDescricao(chamado.descricao);
+    setStatus(chamado.status);
+    setSolicitanteId(chamado.solicitanteId);
+    
+    if (chamado.detalhes) {
+        setDetalheId(chamado.detalhes.id);
+        setDepartamentoId(chamado.detalhes.departamentoId);
+        setCusto(chamado.detalhes.custo || '');
+        setNivelCriticidade(chamado.detalhes.nivelCriticidade || 'Baixo');
+        setObservacoes(chamado.detalhes.observacoes || '');
+        setEncaminhamentos(chamado.detalhes.encaminhamentos || '');
+    }
+    
+    setVisualizandoId(chamado.id);
+    setCurrentStep(7);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -381,47 +404,47 @@ function ChamadosPage() {
              <ul style={{ listStyleType: 'none', padding: 0 }}>
                <li style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                  <span><strong>Título:</strong> {titulo}</span>
-                 <button type="button" onClick={() => setCurrentStep(1)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>
+                 {!visualizandoId && <button type="button" onClick={() => setCurrentStep(1)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>}
                </li>
                <li style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                  <span><strong>Descrição:</strong> <span style={{ whiteSpace: 'pre-wrap' }}>{descricao}</span></span>
-                 <button type="button" onClick={() => setCurrentStep(2)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem', marginLeft: '10px' }}>Editar</button>
+                 {!visualizandoId && <button type="button" onClick={() => setCurrentStep(2)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem', marginLeft: '10px' }}>Editar</button>}
                </li>
-               {editandoId && (
+               {(editandoId || visualizandoId) && (
                  <li style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                    <span><strong>Centro de Custo:</strong> {getNomeDepto(parseInt(departamentoId))}</span>
-                   <button type="button" onClick={() => setCurrentStep(3)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>
+                   {!visualizandoId && <button type="button" onClick={() => setCurrentStep(3)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>}
                  </li>
                )}
-               {editandoId && (
+               {(editandoId || visualizandoId) && (
                  <>
                    <li style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                      <span><strong>Status:</strong> {status}</span>
-                     <button type="button" onClick={() => setCurrentStep(3)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>
+                     {!visualizandoId && <button type="button" onClick={() => setCurrentStep(3)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>}
                    </li>
                    <li style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                      <span><strong>Solicitante:</strong> {getNomeEmpregado(parseInt(solicitanteId))}</span>
-                     <button type="button" onClick={() => setCurrentStep(3)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>
+                     {!visualizandoId && <button type="button" onClick={() => setCurrentStep(3)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>}
                    </li>
                  </>
                )}
                <li style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                  <span><strong>Custo Previsto:</strong> {custo ? `R$ ${parseFloat(custo).toFixed(2)}` : 'Não informado'}</span>
-                 <button type="button" onClick={() => setCurrentStep(4)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>
+                 {!visualizandoId && <button type="button" onClick={() => setCurrentStep(4)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>}
                </li>
                <li style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                  <span><strong>Criticidade:</strong> {nivelCriticidade}</span>
-                 <button type="button" onClick={() => setCurrentStep(5)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>
+                 {!visualizandoId && <button type="button" onClick={() => setCurrentStep(5)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>}
                </li>
                <li style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '1px solid var(--border-color)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                  <span><strong>Observações:</strong> {observacoes || 'Nenhuma'}</span>
-                 <button type="button" onClick={() => setCurrentStep(6)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>
+                 {!visualizandoId && <button type="button" onClick={() => setCurrentStep(6)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>}
                </li>
-               {editandoId && hasRole(['Suporte', 'Gestor']) && (
+               {(editandoId || visualizandoId) && hasRole(['Suporte', 'Gestor']) && (
                    <li style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginBottom: '5px' }}>
                          <span><strong>Histórico de Eventos:</strong></span>
-                         <button type="button" onClick={() => setCurrentStep(6)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>
+                         {!visualizandoId && <button type="button" onClick={() => setCurrentStep(6)} className="btn btn-secondary" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Editar</button>}
                      </div>
                      <pre style={{ whiteSpace: 'pre-wrap', margin: 0, padding: '10px', background: 'var(--bg-color-secondary)', width: '100%', borderRadius: '4px', fontSize: '0.85rem' }}>{encaminhamentos || 'Nenhum evento'}{novoEncaminhamento ? `\n\n[Novo]: ${novoEncaminhamento}` : ''}</pre>
                    </li>
@@ -447,13 +470,13 @@ function ChamadosPage() {
       {currentStep > 0 && (
         <div className="card form-card" style={{ background: 'var(--bg-color-secondary)', borderRadius: '12px', padding: '20px', marginBottom: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-             <h2>{editandoId ? 'Editar Chamado' : 'Novo Chamado'}</h2>
-             <span style={{ background: 'var(--primary-color)', color: 'white', padding: '4px 10px', borderRadius: '12px', fontSize: '0.85rem' }}>Passo {!editandoId && currentStep > 2 ? currentStep - 1 : currentStep} de {!editandoId ? 6 : 7}</span>
+             <h2>{visualizandoId ? 'Visualizar Chamado' : (editandoId ? 'Editar Chamado' : 'Novo Chamado')}</h2>
+             <span style={{ background: 'var(--primary-color)', color: 'white', padding: '4px 10px', borderRadius: '12px', fontSize: '0.85rem' }}>Passo {!editandoId && !visualizandoId && currentStep > 2 ? currentStep - 1 : currentStep} de {!editandoId && !visualizandoId ? 6 : 7}</span>
           </div>
           
           {/* Progress Bar */}
           <div style={{ width: '100%', background: 'var(--bg-color)', height: '8px', borderRadius: '4px', marginBottom: '20px', overflow: 'hidden' }}>
-             <div style={{ width: `${((!editandoId && currentStep > 2 ? currentStep - 1 : currentStep) / (!editandoId ? 6 : 7)) * 100}%`, background: 'var(--primary-color)', height: '100%', transition: 'width 0.3s ease' }}></div>
+             <div style={{ width: `${((!editandoId && !visualizandoId && currentStep > 2 ? currentStep - 1 : currentStep) / (!editandoId && !visualizandoId ? 6 : 7)) * 100}%`, background: 'var(--primary-color)', height: '100%', transition: 'width 0.3s ease' }}></div>
           </div>
 
           <form onSubmit={handleSalvar} className="form-grid">
@@ -466,12 +489,14 @@ function ChamadosPage() {
                 className="btn btn-secondary"
                 onClick={handleBack}
               >
-                {currentStep === 1 ? 'Cancelar' : 'Voltar'}
+                {currentStep === 1 || visualizandoId ? 'Voltar' : 'Voltar'}
               </button>
 
-              <button type="submit" className="btn btn-primary">
-                {currentStep === 7 ? (editandoId ? 'Confirmar Edição' : 'Confirmar e Abrir Chamado') : 'Avançar'}
-              </button>
+              {!visualizandoId && (
+                <button type="submit" className="btn btn-primary">
+                  {currentStep === 7 ? (editandoId ? 'Confirmar Edição' : 'Confirmar e Abrir Chamado') : 'Avançar'}
+                </button>
+              )}
             </div>
           </form>
         </div>
@@ -522,7 +547,7 @@ function ChamadosPage() {
                     <th>Solicitante</th>
                     <th>Centro de Custo</th>
                     <th>Criticidade</th>
-                    {hasRole(['Suporte', 'Gestor']) && <th>Ações</th>}
+                    <th>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -558,18 +583,21 @@ function ChamadosPage() {
                           {chamado.detalhes?.nivelCriticidade}
                         </span>
                       </td>
-                      {hasRole(['Suporte', 'Gestor']) && (
-                        <td className="action-buttons">
-                          {chamado.status !== 'Aberto' && (
-                            <button className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', marginRight: '5px' }} onClick={() => handleEditar(chamado)}>
-                              Editar
-                            </button>
-                          )}
+                      <td className="action-buttons">
+                        {hasRole(['Suporte', 'Gestor']) && chamado.status !== 'Aberto' && chamado.status !== 'Concluído' && (
+                          <button className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', marginRight: '5px' }} onClick={() => handleEditar(chamado)}>
+                            Editar
+                          </button>
+                        )}
+                        <button className="btn btn-secondary" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', marginRight: '5px' }} onClick={() => handleVisualizar(chamado)}>
+                          Visualizar
+                        </button>
+                        {hasRole(['Suporte', 'Gestor']) && (
                           <button className="btn btn-danger" style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem' }} onClick={() => handleExcluir(chamado.id)}>
                             Excluir
                           </button>
-                        </td>
-                      )}
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
