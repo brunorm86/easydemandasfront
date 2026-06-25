@@ -1,6 +1,6 @@
 // src/App.jsx
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, NavLink, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -33,7 +33,7 @@ function Navigation() {
     <nav className="navbar">
       <div className="navbar-brand">EasyDemandas</div>
       <div className="navbar-links">
-        {hasRole(['RH', 'Gestor']) && (
+        {hasRole('RH') && (
           <NavLink to="/empregados" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Empregados</NavLink>
         )}
         {hasRole('Gestor') && (
@@ -43,7 +43,7 @@ function Navigation() {
           </>
         )}
         <NavLink to="/chamados" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Meus Chamados</NavLink>
-        {hasRole(['Suporte', 'Gestor']) && (
+        {hasRole('Suporte') && (
           <NavLink to="/suporte-chamados" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Filtro Suporte</NavLink>
         )}
         <NavLink to="/dashboard" className={({ isActive }) => (isActive ? 'nav-link active nav-link-dashboard' : 'nav-link nav-link-dashboard')}>📊 Dashboard</NavLink>
@@ -62,49 +62,53 @@ function Navigation() {
 
 function MainRoutes() {
   const { user } = useAuth();
+  const location = useLocation();
+  
   return (
     <main className="main-content">
-      <Routes>
-        <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
-        
-        <Route path="/empregados" element={
-          <ProtectedRoute allowedRoles={['RH', 'Gestor']}>
-            <EmpregadosPage />
-          </ProtectedRoute>
-        } />
-        
-        <Route path="/departamentos" element={
-          <ProtectedRoute allowedRoles={['Gestor']}>
-            <DepartamentosPage />
-          </ProtectedRoute>
-        } />
-        
-        <Route path="/cargos" element={
-          <ProtectedRoute allowedRoles={['Gestor']}>
-            <CargosPage />
-          </ProtectedRoute>
-        } />
-        
-        <Route path="/chamados" element={
-          <ProtectedRoute>
-            <ChamadosPage />
-          </ProtectedRoute>
-        } />
-        
-        <Route path="/suporte-chamados" element={
-          <ProtectedRoute allowedRoles={['Suporte', 'Gestor']}>
-            <SuporteChamadosPage />
-          </ProtectedRoute>
-        } />
-        
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            <DashboardPage />
-          </ProtectedRoute>
-        } />
+      <div key={location.pathname} className="page-enter">
+        <Routes location={location}>
+          <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
+          
+          <Route path="/empregados" element={
+            <ProtectedRoute allowedRoles={['RH']}>
+              <EmpregadosPage />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/departamentos" element={
+            <ProtectedRoute allowedRoles={['Gestor']}>
+              <DepartamentosPage />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/cargos" element={
+            <ProtectedRoute allowedRoles={['Gestor']}>
+              <CargosPage />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/chamados" element={
+            <ProtectedRoute>
+              <ChamadosPage />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/suporte-chamados" element={
+            <ProtectedRoute allowedRoles={['Suporte']}>
+              <SuporteChamadosPage />
+            </ProtectedRoute>
+          } />
+          
+          <Route path="/dashboard" element={
+            <ProtectedRoute>
+              <DashboardPage />
+            </ProtectedRoute>
+          } />
 
-        <Route path="*" element={<Navigate to={user ? "/dashboard" : "/login"} replace />} />
-      </Routes>
+          <Route path="*" element={<Navigate to={user ? "/dashboard" : "/login"} replace />} />
+        </Routes>
+      </div>
     </main>
   );
 }

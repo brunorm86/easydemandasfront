@@ -38,6 +38,32 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-color); 
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1); 
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2); 
+}
+
+/* Page Transition Wrapper */
+.page-enter {
+  animation: pageFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* Glassmorphism Container */
 .glass-container {
   background: var(--glass-bg);
@@ -92,9 +118,15 @@ h1, h2, h3, h4, h5, h6 {
   transition: all 0.2s ease;
 }
 
-.nav-link:hover, .nav-link.active {
+.nav-link:hover {
   color: var(--text-primary);
   background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-link.active {
+  color: var(--text-primary);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), transparent);
+  box-shadow: inset 0 -2px 0 var(--primary-color);
 }
 
 /* Form Styles */
@@ -124,7 +156,7 @@ h1, h2, h3, h4, h5, h6 {
 .form-input:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25), 0 0 10px rgba(59, 130, 246, 0.1);
 }
 
 /* Buttons */
@@ -149,7 +181,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-primary:hover {
   background: var(--primary-hover);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px -2px rgba(59, 130, 246, 0.4);
 }
 
 .btn-danger {
@@ -160,7 +193,8 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-danger:hover {
   background: var(--danger-hover);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px -2px rgba(239, 68, 68, 0.4);
 }
 
 .btn-secondary {
@@ -202,11 +236,12 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .table tbody tr {
-  transition: background-color 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateX(4px);
 }
 
 /* Cards */
@@ -284,13 +319,15 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Nav link especial do Dashboard */
 .nav-link-dashboard {
-  background: linear-gradient(135deg, rgba(59,130,246,0.15), rgba(167,139,250,0.15));
-  border: 1px solid rgba(167,139,250,0.25);
+  background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(167,139,250,0.1));
+  border: 1px solid rgba(167,139,250,0.2);
 }
 .nav-link-dashboard:hover,
 .nav-link-dashboard.active {
-  background: linear-gradient(135deg, rgba(59,130,246,0.3), rgba(167,139,250,0.3));
+  background: linear-gradient(135deg, rgba(59,130,246,0.25), rgba(167,139,250,0.25));
   color: var(--text-primary);
+  box-shadow: 0 4px 12px rgba(167,139,250,0.15);
+  transform: translateY(-1px);
 }
 
 /* --- KPI Cards --- */
@@ -470,7 +507,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .dashboard-erro-icon {
-  font-size: 2.5rem;
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+  opacity: 0.8;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.8; }
 }
 
 .spinner {
@@ -628,17 +674,23 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .logout-btn {
-  background: rgba(239, 68, 68, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(239, 68, 68, 0.05);
   color: #ef4444;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  padding: 6px 12px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 6px 14px;
   border-radius: 8px;
   cursor: pointer;
   font-size: 13px;
   font-weight: 600;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .logout-btn:hover {
-  background: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
 }
